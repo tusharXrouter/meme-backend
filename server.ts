@@ -13,9 +13,9 @@ const startServer = async () => {
     const PORT = env.PORT || 8000
     app.listen(PORT, async () => {
         logger.info(`Server is running on port ${PORT}`)
-        // getTokenJob()
-        // getAllTokensSentimentAndPlatformsJob()
-        // getTransactionsJob()
+        getTokenJob()
+        getAllTokensSentimentAndPlatformsJob()
+        getTransactionsJob()
     })
 }
 
