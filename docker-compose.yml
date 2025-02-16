@@ -1,0 +1,9 @@
+services:
+  app:
+    build: . 
+    image: meme-backend-app  
+    container_name: app
+    volumes:
+      - .env:/app/.env 
+    ports:
+      - "8000:8000"
