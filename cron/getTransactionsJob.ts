@@ -125,7 +125,8 @@ const getTokenTransactionsByTokenAddress = async (
     }
 
     const oneHourAgo = Math.floor(Date.now() / 1000) - 3600
-    const url = `${env.BIRDEYE_API_BASE}/defi/txs/token/seek_by_time?address=${tokenAddress}&offset=0&limit=50&tx_type=swap&after_time=${oneHourAgo}`
+    const url = `${env.BIRDEYE_API_BASE}/defi/txs/token/seek_by_time?address=${tokenAddress}&offset=0&limit=50&tx_type=swap&after_time=${oneHourAgo}&sort_type=asc`
+  
     try {
         await new Promise((resolve) => setTimeout(resolve, 200))
         const response = await fetch(url, options)
