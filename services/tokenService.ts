@@ -17,7 +17,8 @@ export const getTokenByIdService = async (id: string) => {
 export const getAllTokensService = async (
     page: number,
     per_page: number,
-    order: string
+    order: string,
+    chain?: string
 ) => {
     const skip = (page - 1) * per_page
 
@@ -33,8 +34,18 @@ export const getAllTokensService = async (
         change_24h_desc: { change_24h: -1 },
     }
 
-    // Fetch the tokens with pagination and sorting
-    const tokens = await Token.find()
+    // Build the filter query
+    const filterQuery: any = {}
+    if (chain) {
+        filterQuery["platforms"] = {
+            $elemMatch: {
+                $or: [{ chainName: chain }, { chainId: chain }],
+            },
+        }
+    }
+
+    // Fetch the tokens with pagination, filtering, and sorting
+    const tokens = await Token.find(filterQuery)
         .sort(sortOptions[order])
         .skip(skip)
         .limit(per_page)

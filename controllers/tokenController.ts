@@ -54,37 +54,41 @@ export const getAllTokens = async (req: Request, res: Response) => {
     logger.info(`Received request to get tokens: ${req.method} ${req.url}`)
 
     try {
-        const { per_page = 10, page = 1, order = 'change_24h_desc' } = req.query
+        const { per_page = '10', page = '1', order = 'change_24h_desc', chain } = req.query;
 
-        const parsedPage = parseInt(page as string, 10)
-        const parsedPerPage = parseInt(per_page as string, 10)
+        const parsedPage = parseInt(page as string, 10);
+        const parsedPerPage = parseInt(per_page as string, 10);
 
         if (parsedPage <= 0 || parsedPerPage <= 0) {
-            logger.warn('Invalid pagination parameters')
+            logger.warn('Invalid pagination parameters');
             return res.status(400).json({
                 status: 'error',
                 message: 'Page and per_page must be positive integers',
                 data: null,
-            })
+            });
         }
 
-        logger.info('Fetching tokens with pagination and sorting')
+        // Ensure chain is treated as a string or undefined
+        const chainString = typeof chain === 'string' ? chain : undefined;
+
+        logger.info('Fetching tokens with pagination and sorting');
         const tokens = await getAllTokensService(
             parsedPage,
             parsedPerPage,
-            order as string
-        )
+            order as string,
+            chainString
+        );
 
         if (!tokens || tokens.length === 0) {
-            logger.warn('No tokens found')
+            logger.warn('No tokens found');
             return res.status(404).json({
                 status: 'error',
                 message: 'No tokens found',
                 data: [],
-            })
+            });
         }
 
-        const totalTokens = await Token.countDocuments()
+        const totalTokens = await Token.countDocuments();
 
         return res.status(200).json({
             status: 'success',
@@ -95,13 +99,13 @@ export const getAllTokens = async (req: Request, res: Response) => {
                 per_page: parsedPerPage,
                 total: totalTokens,
             },
-        })
+        });
     } catch (error) {
-        logger.error(`Error fetching tokens: ${error}`)
+        logger.error(`Error fetching tokens: ${error}`);
         return res.status(500).json({
             status: 'error',
             message: 'Internal server error',
             error: (error as Error).message,
-        })
+        });
     }
-}
+};
